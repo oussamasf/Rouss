@@ -12,7 +12,18 @@ if(Object.keys(item).length===0) return null
 return deserialize(id,item)
 };
 
-export const getItems = async (ids: string[]) => {};
+export const getItems = async (ids: string[]) => {
+    const commands = ids.map(id=>{
+        return client.hGetAll(itemsKey(id))
+    })
+    const results = await Promise.all(commands)
+   return  results.map(result => {
+if (Object.keys(result,index).length===0){
+    return null
+}
+return deserialize(ids[index],result)
+    })
+};
 
 export const createItem = async (attrs: CreateItemAttrs, userId: string) => {
     const id = genId();
